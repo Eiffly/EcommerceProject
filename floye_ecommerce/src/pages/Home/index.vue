@@ -17,6 +17,7 @@ import Rank from "@/pages/Home/Rank";
 import Like from "@/pages/Home/Like";
 import Floor from "@/pages/Home/Floor";
 import Brand from "@/pages/Home/Brand";
+
 export default {
   components: { ListContainer, Recommend, Rank, Like, Floor, Brand },
 };
