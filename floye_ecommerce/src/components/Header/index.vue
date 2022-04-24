@@ -60,10 +60,16 @@ export default {
   },
   methods: {
     goSearch() {
-      this.$router.push(
-        `/search/${this.keyword || undefined}?k=${this.keyword.toUpperCase()}`
-      );
+      // 可以不加下面的判断条件 因为一开始的数据就是一个空数组
+      // if (this.$route.query) {
+      let location = {
+        name: "Search",
+        params: { keyword: this.keyword || undefined },
+      };
+      location.query = this.$route.query;
+      this.$router.push(location);
     },
+    // },
   },
 };
 </script>

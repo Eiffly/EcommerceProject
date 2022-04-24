@@ -1,6 +1,6 @@
 <template>
   <div class="type-nav">
-    <div class="container" @mouseleave="mouseleave()">
+    <div class="container" @mouseleave="leaveShow()" @mouseenter="enterShow()">
       <h2 class="all">全部商品分类</h2>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -12,43 +12,58 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <div class="all-sort-list2" @click="goSearch">
-          <div
-            class="item"
-            v-show="index !== 16"
-            v-for="(c1, index) in categoryList"
-            :key="c1.categoryId"
-            @mouseenter="mouseenter(index)"
-            :class="{ cur: curIndex == index }"
-          >
-            <h3>
-              <a href="">{{ c1.categoryName }}</a>
-            </h3>
+      <!-- 添加动画效果 -->
+      <transition name="sort">
+        <div class="sort" v-show="show">
+          <div class="all-sort-list2" @click="goSearch">
             <div
-              class="item-list clearfix"
-              :style="{ display: curIndex === index ? 'block' : 'none' }"
+              class="item"
+              v-show="index !== 16"
+              v-for="(c1, index) in categoryList"
+              :key="c1.categoryId"
+              @mouseenter="mouseenter(index)"
+              :class="{ cur: curIndex == index }"
             >
+              <h3>
+                <a
+                  :data-categoryName="c1.categoryName"
+                  :data-category1Id="c1.categoryId"
+                  >{{ c1.categoryName }}</a
+                >
+              </h3>
               <div
-                class="subitem"
-                v-for="c2 in c1.categoryChild"
-                :key="c2.categoryId"
+                class="item-list clearfix"
+                :style="{ display: curIndex === index ? 'block' : 'none' }"
               >
-                <dl class="fore">
-                  <dt>
-                    <a href="">{{ c2.categoryName }}</a>
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                      <a href="">{{ c3.categoryName }}</a>
-                    </em>
-                  </dd>
-                </dl>
+                <div
+                  class="subitem"
+                  v-for="c2 in c1.categoryChild"
+                  :key="c2.categoryId"
+                >
+                  <dl class="fore">
+                    <dt>
+                      <a
+                        :data-categoryName="c2.categoryName"
+                        :data-category2Id="c2.categoryId"
+                        >{{ c2.categoryName }}</a
+                      >
+                    </dt>
+                    <dd>
+                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                        <a
+                          :data-categoryName="c3.categoryName"
+                          :data-category3Id="c3.categoryId"
+                          >{{ c3.categoryName }}</a
+                        >
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -63,11 +78,14 @@ export default {
   data() {
     return {
       curIndex: -1,
+      show: true,
     };
   },
   mounted() {
     //挂载完毕后 进行事件的委派
-    this.$store.dispatch("categoryList");
+    if (this.$route.path !== "/home") {
+      this.show = false;
+    }
   },
   computed: {
     ...mapState({
@@ -79,11 +97,47 @@ export default {
     mouseenter: throttle(function (index) {
       this.curIndex = index;
     }, 50),
-    mouseleave() {
+    // 事件二：鼠标离开，背景恢复到之前的颜色
+    leaveShow() {
+      if (this.$route.path !== "/home") {
+        this.show = false;
+      }
       this.curIndex = -1;
     },
+    // 事件三：点击相应的内容后，路由进行了跳转
     goSearch(event) {
-      console.log(event);
+      let element = event.target;
+      console.log(element.dataset);
+      let { categoryname, category1id, category2id, category3id } =
+        element.dataset;
+
+      if (categoryname) {
+        let location = { name: "Search" }; //跳转路由name
+        //添加相应的对象
+        let query = { categoryName: categoryname };
+        if (category1id) {
+          //向对象的身上添加相应的属性
+          query.category1Id = category1id;
+        } else if (category2id) {
+          query.category2Id = category2id;
+        } else if (category3id) {
+          query.category3Id = category3id;
+        }
+        // 将路由信息进行合并
+        // if (this.$route.params) {
+          location.params = this.$route.params;
+          //整理完参数
+          location.query = query;
+          //路由跳转
+          this.$router.push(location);
+        }
+      // }
+    },
+    // 事件四：鼠标移入的时候，
+    enterShow() {
+      if (this.$route.path !== "/home") {
+        this.show = true;
+      }
     },
   },
 };
@@ -209,6 +263,18 @@ export default {
           background-color: skyblue;
         }
       }
+    }
+    //过度动画开始状态（进入）
+    .sort-enter {
+      height: 0px;
+    }
+    // 过渡动画结束状态（进入）
+    .sort-enter-to {
+      height: 461px;
+    }
+    // 定义动画的时间和速率
+    .sort-enter-active {
+      transition: all 0.5s linear;
     }
   }
 }
