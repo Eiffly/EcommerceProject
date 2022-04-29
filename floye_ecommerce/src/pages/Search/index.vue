@@ -11,41 +11,60 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
+            <!-- 目录面包屑 -->
             <li class="with-x" v-if="searchParams.categoryName">
               {{ searchParams.categoryName }}
               <i @click="removeCategoryName">×</i>
             </li>
+            <!-- 关键词面包屑 -->
             <li class="with-x" v-if="searchParams.keyword">
               {{ searchParams.keyword }}<i @click="removeKeyWord">×</i>
+            </li>
+            <!-- 品牌面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">
+              {{ searchParams.trademark.split(":")[1]
+              }}<i @click="removeTrademark">×</i>
+            </li>
+            <!-- 属姓面包屑 -->
+            <li
+              class="with-x"
+              v-for="(attrCon, index) in searchParams.props"
+              :key="index"
+            >
+              {{ attrCon.split(":")[1] }}<i @click="removeAttr(index)">×</i>
             </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector
+          @getTrademarkList="getTrademarkList"
+          @getAttrValue="getAttrValue"
+        />
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{ active: isOne }" @click="changeOrder('1')">
+                  <a href="#"
+                    >综合
+                    <span
+                      v-show="isOne"
+                      class="iconfont"
+                      :class="{ 'icon-down': isDown, 'icon-up': isUp }"
+                    ></span
+                  ></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ active: isTwo }" @click="changeOrder('2')">
+                  <a href="#"
+                    >销量<span
+                      v-show="isTwo"
+                      class="iconfont"
+                      :class="{ 'icon-down': isDown, 'icon-up': isUp }"
+                    ></span
+                  ></a>
                 </li>
               </ul>
             </div>
@@ -143,7 +162,7 @@ export default {
         // 关键字
         keyword: "",
         // 排序
-        order: "",
+        order: "1:desc",
         pageNo: 1,
         //代表着每一页展示的个数
         pageSize: 3,
@@ -168,6 +187,18 @@ export default {
   computed: {
     //借助mapGetters生成计算属性：
     ...mapGetters(["goodsList", "attrsList", "trademarkList"]),
+    isOne() {
+      return this.searchParams.order.split(":")[0] === "1";
+    },
+    isTwo() {
+      return this.searchParams.order.split(":")[0] === "2";
+    },
+    isDown() {
+      return this.searchParams.order.split(":")[1] === "desc";
+    },
+    isUp() {
+      return this.searchParams.order.split(":")[1] === "asc";
+    },
   },
   methods: {
     getData() {
@@ -182,7 +213,7 @@ export default {
       this.getData();
       // 需要向服务器发送一次请求
       if (this.$route.params) {
-        this.$router.push({ name: "Search", query: this.$route.params });
+        this.$router.push({ name: "Search", params: this.$route.params });
       }
     },
     removeKeyWord() {
@@ -192,9 +223,51 @@ export default {
       // 涉及到全局事件总线 $bus
       this.$bus.$emit("clear");
       // 需要向服务器发送一次请求
-      // if (this.$route.query) {
-      this.$router.push({ name: "Search", query: this.$route.query });
-      // }
+      if (this.$route.query) {
+        this.$router.push({
+          name: "Search",
+          params: { keyword: this.searchParams.keyword },
+          query: this.$route.query,
+        });
+      }
+    },
+    getTrademarkList(tmId, tmName) {
+      // 相应的内容设置为
+      this.searchParams.trademark = `${tmId}:${tmName}`;
+      this.getData();
+    },
+    // 删除品牌的信息
+    removeTrademark() {
+      this.searchParams.trademark = undefined;
+      this.getData();
+    },
+
+    //获取属性值相关的内容
+    getAttrValue(attr, attrValue) {
+      let attrCon = `${attr.attrId}:${attrValue}:${attr.attrName}`;
+      if (!this.searchParams.props.includes(attrCon)) {
+        this.searchParams.props.push(attrCon);
+      }
+      this.getData();
+    },
+    removeAttr(index) {
+      // 删除相应的数据
+      this.searchParams.props.splice(index, 1);
+      this.getData();
+    },
+
+    //改变排序的顺序
+    changeOrder(order) {
+      //获取之前的顺序属性（综合还是价格）还有类型（向上还是向下）
+      let oldOrder = this.searchParams.order;
+      let newOrder = "";
+      if (order === "1") {
+        newOrder = oldOrder.includes("desc") ? "1:asc" : "1:desc";
+      } else {
+        newOrder = oldOrder.includes("desc") ? "2:asc" : "2:desc";
+      }
+      this.searchParams.order = newOrder;
+      this.getData();
     },
   },
   watch: {

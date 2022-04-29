@@ -5,7 +5,11 @@
       <div class="value logos">
         <ul class="logo-list">
           <!--商品的品牌列表  -->
-          <li v-for="trademark in trademarkList" :key="trademark.tmId">
+          <li
+            v-for="trademark in trademarkList"
+            :key="trademark.tmId"
+            @click="getTrademarkList(trademark.tmId, trademark.tmName)"
+          >
             {{ trademark.tmName }}
           </li>
         </ul>
@@ -20,7 +24,11 @@
       <div class="fl key">{{ attr.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+          <li
+            v-for="(attrValue, index) in attr.attrValueList"
+            :key="index"
+            @click="getAttrValue(attr, attrValue)"
+          >
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -38,7 +46,15 @@ export default {
     // attrsList表示商品的属性，trademarkList表示品牌
     ...mapGetters(["attrsList", "trademarkList"]),
   },
-  methods: {},
+  methods: {
+    getTrademarkList(tmId, tmName) {
+      // console.log(tmId, tmName);
+      this.$emit("getTrademarkList", tmId, tmName);
+    },
+    getAttrValue(attr, attrValue) {
+      this.$emit("getAttrValue", attr, attrValue);
+    },
+  },
 };
 </script>
 
