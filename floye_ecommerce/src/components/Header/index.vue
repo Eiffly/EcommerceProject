@@ -69,7 +69,13 @@ export default {
       location.query = this.$route.query;
       this.$router.push(location);
     },
+
     // },
+  },
+  mounted() {
+    this.$bus.$on("clear", () => {
+      this.keyword = "";
+    });
   },
 };
 </script>
