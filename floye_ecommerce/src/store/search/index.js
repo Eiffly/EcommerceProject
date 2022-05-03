@@ -1,6 +1,6 @@
 import { reqGetSearchInfo } from "@/api"
 const state = {
-    searchInfo: {}
+    searchInfo: {},
 }
 const mutations = {
     GETSEARCHINFO(state, data) {

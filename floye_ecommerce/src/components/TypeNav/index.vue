@@ -124,14 +124,14 @@ export default {
           query.category3Id = category3id;
         }
         // 将路由信息进行合并
-        // if (this.$route.params) {
+        if (this.$route.params) {
           location.params = this.$route.params;
           //整理完参数
           location.query = query;
           //路由跳转
           this.$router.push(location);
         }
-      // }
+      }
     },
     // 事件四：鼠标移入的时候，
     enterShow() {
