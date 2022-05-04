@@ -1,8 +1,9 @@
-import { reqGetGoodInfo } from "@/api"
-
+import { reqGetGoodInfo, reqAddorUpdateShopCar } from "@/api"
+import { getUUID } from '@/utils/uuid_token.js'
 
 const state = {
-    goodInfo: {}
+    goodInfo: {},
+    uuid_token: getUUID()
 }
 const mutations = {
     GETGOODINFO(state, data) {
@@ -15,6 +16,14 @@ const actions = {
         let result = await reqGetGoodInfo(skuId)
         if (result.code == 200) {
             commit('GETGOODINFO', result.data)
+        }
+    },
+    async addorUpdateShopCar({ commit }, { skuId, skuNum }) {
+        let result = await reqAddorUpdateShopCar({ skuId, skuNum });
+        if (result.code == 200) {
+            return "OK"
+        } else {
+            return Promise.reject(new Error("传递参数失败"))
         }
     }
 };

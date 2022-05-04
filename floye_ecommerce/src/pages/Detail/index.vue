@@ -102,7 +102,7 @@
                 <input
                   autocomplete="off"
                   class="itxt"
-                  :value="skuNum"
+                  v-model="skuNum"
                   @change="changeSkuNum"
                 />
                 <a href="javascript:" class="plus" @click="skuNum++">+</a>
@@ -113,7 +113,7 @@
                   >-</a
                 >
               </div>
-              <div class="add">
+              <div class="add" @click="addorUpdateShopCar">
                 <a href="javascript:">加入购物车</a>
               </div>
             </div>
@@ -386,12 +386,36 @@ export default {
     },
     // 修改购物车内部的数量
     changeSkuNum(event) {
-      const num = event.target.value * 1;
-      // 需要事先去判断一下数据的类型
-      if (isNaN(num) || num < 1) {
-        this.skuNum = 1;
-      } else {
-        this.skuNum = parseInt(num);
+      //方式一:用if条件句来判断
+      // const num = parseInt(event.target.value);
+      // // 需要事先去判断一下数据的类型
+      // if (isNaN(num) || num < 1) {
+      //   console.log(this.skuNum);
+      // } else {
+      //   this.skuNum = parseInt(num);
+      // }
+
+      //方式二：用正则表达式来判断
+      let reg = /^\d*[/.]?\d*$/g;
+      const num = event.target.value;
+      this.skuNum = reg.test(num) ? parseInt(num) : 1;
+    },
+    // 添加到购物车
+    async addorUpdateShopCar() {
+      try {
+        await this.$store.dispatch("addorUpdateShopCar", {
+          skuId: this.$route.params.skuId,
+          skuNum: this.skuNum,
+        });
+        // 会话存储
+        sessionStorage.setItem("SKUINFO", JSON.stringify(this.skuInfo));
+        //成功之后，进行路由的跳转
+        this.$router.push({
+          name: "AddCartSuccess",
+          query: { skuNum: this.skuNum },
+        });
+      } catch (error) {
+        alert(error.message);
       }
     },
   },

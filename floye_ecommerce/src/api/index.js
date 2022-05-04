@@ -18,4 +18,12 @@ export const reqGetGoodInfo = (skuId) => requests({
     url: `/item/${skuId}`, method: 'GET'
 })
 
+// 更新购物车数据 /api/cart/addToCart/{ skuId }/{ skuNum }
+export const reqAddorUpdateShopCar = ({ skuId, skuNum }) => requests({
+    url: `/cart/addToCart/${skuId}/${skuNum}`, method: 'POST'
+})
 
+// 获取购物车列表 /api/cart/cartList
+export const reqGetCartList = () => requests({
+    url: `/cart/cartList`, method: 'GET'
+})
