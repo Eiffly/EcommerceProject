@@ -16,7 +16,8 @@
             <input
               type="checkbox"
               name="chk_list"
-              :checked="carInfo.isChecked"
+              :checked="carInfo.isChecked == 1"
+              @change="updateChecked(carInfo, $event)"
             />
           </li>
           <li class="cart-list-con2">
@@ -53,7 +54,7 @@
             <span class="sum">{{ carInfo.skuNum * carInfo.skuPrice }}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a href="#none" class="sindelet" @click="deleCart(carInfo)">删除</a>
             <br />
             <a href="#none">移到收藏</a>
           </li>
@@ -62,11 +63,16 @@
     </div>
     <div class="cart-tool">
       <div class="select-all">
-        <input class="chooseAll" type="checkbox" :checked="isAllChecked" />
+        <input
+          class="chooseAll"
+          type="checkbox"
+          :checked="isAllChecked && carInfoLists.length !== 0"
+          @change="updateAllCartChecked"
+        />
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
+        <a @click="deleteAllCheckedCart">删除选中的商品</a>
         <a href="#none">移到我的关注</a>
         <a href="#none">清除下柜商品</a>
       </div>
@@ -117,8 +123,55 @@ export default {
     getData() {
       this.$store.dispatch("getCarList");
     },
+    // 删除某一项商品
+    deleCart: throttle(async function (carInfo) {
+      try {
+        await this.$store.dispatch("deleteCarList", carInfo.skuId);
+        this.getData();
+      } catch (error) {
+        alert(error.message);
+      }
+    }, 50),
+
+    //修改某一个产品的勾选状态
+    async updateChecked(cart, event) {
+      //带给服务器的参数isChecked，不是布尔值，应该是0|1
+      try {
+        //如果修改数据成功，再次获取服务器数据（购物车）
+        let isChecked = event.target.checked ? "1" : "0";
+        await this.$store.dispatch("updateCheckedById", {
+          skuId: cart.skuId,
+          isChecked,
+        });
+        this.getData();
+      } catch (error) {
+        //如果失败提示
+        alert(error.message);
+      }
+    },
+
+    // 删除所有选中的商品
+    async deleteAllCheckedCart() {
+      try {
+        await this.$store.dispatch("deleteAllCheckedCart");
+        this.getData();
+      } catch (error) {
+        alert(error.message);
+      }
+    },
+
+    //更新产品的全选状态
+    async updateAllCartChecked(event) {
+      let isChecked = event.target.checked ? "1" : "0";
+      try {
+        await this.$store.dispatch("updateAllCarIsChecked", isChecked);
+        this.getData();
+      } catch (error) {
+        alert(error.message);
+      }
+    },
     //改变产品数量事件,需要用到节流
-    handler: throttle(async function (type, disNum, cart) {
+    handler: throttle(async function (type, curNum, carInfo) {
       // console.log(type, curNum, carInfo);
       switch (type) {
         case "mins":
@@ -132,7 +185,6 @@ export default {
           curNum = 1;
           break;
         case "change":
-          let num = parseInt(carInfo.skuNum);
           //有三种情况
           if (isNaN(curNum) || curNum < 0) {
             curNum = 0;

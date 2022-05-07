@@ -27,3 +27,11 @@ export const reqAddorUpdateShopCar = ({ skuId, skuNum }) => requests({
 export const reqGetCartList = () => requests({
     url: `/cart/cartList`, method: 'GET'
 })
+
+//删除商品 /api/cart/deleteCart/{skuId} DELETE
+export const deleteCartList = (skuId) => requests({
+    url: `/cart/deleteCart/${skuId}`, method: 'DELETE'
+})
+
+//切换商品选中状态 /api/cart/checkCart/{skuId}/{isChecked}
+export const reqUpdateCheckedByid = (skuId, isChecked) => requests({ url: `/cart/checkCart/${skuId}/${isChecked}`, method: 'get' });
