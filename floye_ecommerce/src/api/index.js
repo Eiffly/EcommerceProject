@@ -35,3 +35,11 @@ export const deleteCartList = (skuId) => requests({
 
 //切换商品选中状态 /api/cart/checkCart/{skuId}/{isChecked}
 export const reqUpdateCheckedByid = (skuId, isChecked) => requests({ url: `/cart/checkCart/${skuId}/${isChecked}`, method: 'get' });
+
+//获取验证码  /api/user/passport/sendCode/{phone}
+export const reqGetCode = (phone) => requests({ url: `/user/passport/sendCode/${phone}`, method: 'get' });
+
+
+//获取验证码 /api/user/passport/register 带上的数据：phone password code
+
+export const reqUserRegister = (data) => requests({ url: `/user/passport/register`, data, method: 'POST' });
