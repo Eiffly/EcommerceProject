@@ -43,3 +43,15 @@ export const reqGetCode = (phone) => requests({ url: `/user/passport/sendCode/${
 //获取验证码 /api/user/passport/register 带上的数据：phone password code
 
 export const reqUserRegister = (data) => requests({ url: `/user/passport/register`, data, method: 'POST' });
+
+
+// 登录页面 发送完登录请求后  /api/user/passport/login
+export const reqUserLogin = (data) => requests({ url: '/user/passport/login', data, method: 'post' });
+
+
+//自动登录 
+export const reqUserInfo = () => requests({ url: '/user/passport/auth/getUserInfo', method: 'GET' });
+
+//退出登录事件 /api/user/passport/logout
+export const reqLogout = () => requests({ url: '/user/passport/logout', method: 'GET' });
+

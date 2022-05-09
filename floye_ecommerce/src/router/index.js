@@ -15,7 +15,7 @@ VueRouter.prototype.push = function (location, resolve, reject) {
     }
 }
 
-export default new VueRouter({
+let   router =new VueRouter({
     routes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
@@ -24,4 +24,9 @@ export default new VueRouter({
             return { y: 0 }
         }
     },
+});
+
+router.beforeEach((to, from, next) => {
+    
 })
+export default router;

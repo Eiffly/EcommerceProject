@@ -5,10 +5,15 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="!userName">
             <span>请</span>
             <router-link to="/login">登录</router-link>
             <router-link class="register" to="/register">免费注册</router-link>
+          </p>
+          <p v-else>
+            <a>{{ userName }}</a>
+            <a class="register" @click="userLogout">退出登录</a>
+            <!-- <router-link class="register" to="/register">免费注册</router-link> -->
           </p>
         </div>
         <div class="typeList">
@@ -58,6 +63,11 @@ export default {
       keyword: "",
     };
   },
+  computed: {
+    userName() {
+      return this.$store.state.user.userInfo.name;
+    },
+  },
   methods: {
     goSearch() {
       // 可以不加下面的判断条件 因为一开始的数据就是一个空数组
@@ -68,6 +78,14 @@ export default {
         };
         location.query = this.$route.query;
         this.$router.push(location);
+      }
+    },
+    // 退出登录事件
+    async userLogout() {
+      try {
+        await this.$store.dispatch("userLogout");
+      } catch (error) {
+        alert(error.message);
       }
     },
   },

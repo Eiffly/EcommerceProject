@@ -8,6 +8,8 @@ import store from '@/store'
 import '@/mock/mockServer'
 import "swiper/css/swiper.min.css"
 
+
+
 // import { reqCateGoryList } from '@/api'
 //发起请求
 // reqCateGoryList();

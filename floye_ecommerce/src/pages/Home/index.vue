@@ -18,10 +18,12 @@ import Like from "@/pages/Home/Like";
 import Floor from "@/pages/Home/Floor";
 import Brand from "@/pages/Home/Brand";
 import { mapState } from "vuex";
+
 export default {
   components: { ListContainer, Recommend, Rank, Like, Floor, Brand },
   mounted() {
     this.$store.dispatch("floorList");
+    this.$store.dispatch("getUserInfo");
   },
   computed: {
     ...mapState({ floorList: (value) => value.home.floorList }),

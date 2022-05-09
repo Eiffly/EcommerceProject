@@ -14,7 +14,7 @@
           </ul>
 
           <div class="content">
-            <form action="##">
+            <form>
               <div class="input-text clearFix">
                 <span></span>
                 <input
@@ -26,7 +26,7 @@
               <div class="input-text clearFix">
                 <span class="pwd"></span>
                 <input
-                  type="text"
+                  type="password"
                   placeholder="请输入密码"
                   v-model="password"
                 />
@@ -38,7 +38,9 @@
                 </label>
                 <span class="forget">忘记密码？</span>
               </div>
-              <button class="btn">登&nbsp;&nbsp;录</button>
+              <button class="btn" @click.prevent="userLogin()">
+                登&nbsp;&nbsp;录
+              </button>
             </form>
 
             <div class="call clearFix">
@@ -82,6 +84,19 @@ export default {
       phone: "",
       password: "",
     };
+  },
+  methods: {
+    async userLogin() {
+      try {
+        const { phone, password } = this;
+        phone &&
+          password &&
+          (await this.$store.dispatch("userLogin", { phone, password }));
+        this.$router.push("/home");
+      } catch (error) {
+        alert(error.message);
+      }
+    },
   },
 };
 </script>

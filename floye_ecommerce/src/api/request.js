@@ -24,7 +24,10 @@ requests.interceptors.request.use(config => {
         //2、userTempId字段和后端统一
         config.headers['userTempId'] = store.state.detail.uuid_token
     }
-
+    //查看是否携带相关的token
+    if (store.state.user.token) {
+        config.headers.token = store.state.user.token
+    }
     //开启进度条
     nprogress.start();
     return config
