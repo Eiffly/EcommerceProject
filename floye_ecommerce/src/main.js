@@ -8,11 +8,8 @@ import store from '@/store'
 import '@/mock/mockServer'
 import "swiper/css/swiper.min.css"
 import * as API from '@/api'
+import { Button, Select, MessageBox } from 'element-ui';
 
-
-// import { reqCateGoryList } from '@/api'
-//发起请求
-// reqCateGoryList();
 
 
 
@@ -20,6 +17,10 @@ Vue.config.productionTip = false
 Vue.component(TypeNav.name, TypeNav)
 Vue.component(Carouse.name, Carouse)
 Vue.component(Pagination.name, Pagination)
+Vue.component(Button.name, Button);
+Vue.component(Select.name, Select);
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
 
 new Vue({
   render: h => h(App),

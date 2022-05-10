@@ -7,10 +7,16 @@ import AddCartSuccess from "@/pages/AddCartSuccess"
 import ShopCart from "@/pages/ShopCart"
 import Trade from "@/pages/Trade"
 import Pay from "@/pages/Pay"
+import PaySuccess from "@/pages/PaySuccess"
 
 
 // 这里应该写成什么形式呢
 export default [
+    {
+        path: "/paysuccess",
+        component: PaySuccess,
+        meta: { show: true }
+    },
     {
         path: "/pay",
         component: Pay,
