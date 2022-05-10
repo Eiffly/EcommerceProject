@@ -7,7 +7,7 @@ import Pagination from "@/components/Pagination"
 import store from '@/store'
 import '@/mock/mockServer'
 import "swiper/css/swiper.min.css"
-
+import * as API from '@/api'
 
 
 // import { reqCateGoryList } from '@/api'
@@ -25,6 +25,7 @@ new Vue({
   render: h => h(App),
   beforeCreate() {
     Vue.prototype.$bus = this //安装全局事件总线，$bus就是当前应用的vm
+    Vue.prototype.$API = API //安装全局事件总线，$bus就是当前应用的vm
   },
   router,
   store,

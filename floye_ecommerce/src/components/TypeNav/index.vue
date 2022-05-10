@@ -107,7 +107,7 @@ export default {
     // 事件三：点击相应的内容后，路由进行了跳转
     goSearch(event) {
       let element = event.target;
-      console.log(element.dataset);
+      // console.log(element.dataset);
       let { categoryname, category1id, category2id, category3id } =
         element.dataset;
 

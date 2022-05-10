@@ -12,7 +12,6 @@ const actions = {
     //注意这里必须要传入参数的，否则状态码是错误
     async getSearchInfo({ commit }, params) {
         let result = await reqGetSearchInfo(params)
-        // console.log(result);
         if (result.code == 200) {
             commit('GETSEARCHINFO', result.data)
         }
