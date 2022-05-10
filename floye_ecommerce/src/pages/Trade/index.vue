@@ -60,6 +60,7 @@
         <textarea
           placeholder="建议留言前先与商家沟通确认"
           class="remarks-cont"
+          v-model="msg"
         ></textarea>
       </div>
       <div class="line"></div>
@@ -100,7 +101,8 @@
       </div>
     </div>
     <div class="sub clearFix">
-      <router-link class="subBtn" to="/pay">提交订单</router-link>
+      <a class="subBtn" @click="goPay">提交订单 </a>
+      <!-- <router-link class="subBtn" to="/pay">提交订单</router-link> -->
     </div>
   </div>
 </template>
@@ -109,6 +111,12 @@
 import { mapState } from "vuex";
 export default {
   name: "Trade",
+  data() {
+    return {
+      msg: "",
+      orderId: "",
+    };
+  },
   mounted() {
     this.$store.dispatch("getUserAddress");
     this.$store.dispatch("getOrderInfo");
@@ -130,6 +138,29 @@ export default {
         element.isDefault = "0";
       });
       address.isDefault = "1";
+    },
+
+    // 路由跳转+路由传递参数
+    async goPay() {
+      let tradeNo = this.orderInfo.tradeNo;
+      let data = {
+        consignee: this.userDefaultAddress.consignee,
+        consigneeTel: this.userDefaultAddress.phoneNum,
+        deliveryAddress: this.userDefaultAddress.userAddress,
+        paymentWay: "ONLINE",
+        orderComment: this.msg,
+        orderDetailList: this.orderInfo.detailArrayList,
+      };
+      // 发送请求，获取订单号
+      let result = await this.$API.reqSubmitOrder(tradeNo, data);
+      console.log(result);
+      if (result.code == 200) {
+        this.orderId = result.data;
+        //路由跳转 + 路由传递参数
+        this.$router.push("/pay?orderId=" + this.orderId);
+      } else {
+        alert("状态错误");
+      }
     },
   },
 };
