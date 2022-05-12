@@ -102,7 +102,9 @@ export default {
   data() {
     return {
       payInfo: {},
+      // 定时器监视
       timer: null,
+      // 查询订单号返回的状态码
       code: "",
     };
   },
@@ -128,7 +130,29 @@ export default {
         showCancelButton: true,
         cancelButtonText: "支付遇见问题",
         confirmButtonText: "已支付成功",
+        beforeClose: (action, instance, done) => {
+          // console.log(action);
+          if (action == "cancel") {
+            alert("请将问题反馈给后台");
+            //响应成功之后 清除定时器
+            clearInterval(this.timer);
+            this.timer = null;
+            done();
+          } else {
+            // 这里为了方便测试，我们省略状态码的查看
+            // 但是在实际开发的时候，必须要查看
+            // if (result.code == 200) {
+              //响应成功之后 清除定时器
+              clearInterval(this.timer);
+              this.timer = null;
+              done();
+              this.$router.push("/paysuccess");
+            // }
+          }
+        },
       });
+
+      // 如果没有定时器，创建一个定时器进行实时监视
       if (!this.timer) {
         this.timer = setInterval(async () => {
           let result = await this.$API.reqPayState(this.$route.query.orderId);
@@ -144,7 +168,6 @@ export default {
             //跳转到下一路由
             this.$router.push("/paysuccess");
           }
-          // console.log(result);
         }, 1000);
       }
     },

@@ -70,3 +70,8 @@ export const reqPayInfo = (orderId) => requests({ url: `/payment/weixin/createNa
 
 //查询支付订单状态  /api/payment/weixin/queryPayStatus/{orderId}
 export const reqPayState = (orderId) => requests({ url: `/payment/weixin/queryPayStatus/${orderId}`, method: 'GET' });
+
+
+
+//获取我的订单列表  /api/order/auth/{page}/{limit}
+export const reqMyOrderList = (page, limit) => requests({ url: `/order/auth/${page}/${limit}`, method: 'GET' });

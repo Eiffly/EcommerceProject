@@ -8,10 +8,32 @@ import ShopCart from "@/pages/ShopCart"
 import Trade from "@/pages/Trade"
 import Pay from "@/pages/Pay"
 import PaySuccess from "@/pages/PaySuccess"
+import Center from "@/pages/Center"
+import groupOrder from "@/pages/Center/groupOrder"
+import myOrder from "@/pages/Center/myOrder"
 
 
 // 这里应该写成什么形式呢
 export default [
+    {
+        path: "/center",
+        component: Center,
+        meta: { show: true },
+        children: [
+            {
+                path: "groupOrder",
+                component: groupOrder,
+            },
+            {
+                path: "myOrder",
+                component: myOrder,
+            },
+            {
+                path: "",
+                redirect: "myOrder"
+            }
+        ]
+    },
     {
         path: "/paysuccess",
         component: PaySuccess,
