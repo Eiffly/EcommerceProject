@@ -1,139 +1,146 @@
-//api文件夹里面用于发请求的函数:登录、退出登录、获取用户信息
-import { login, logout, getInfo } from "@/api/acl/user";
-//获取token|设置token|移出token的函数
-import { getToken, setToken, removeToken } from "@/utils/auth";
-//重置路由
-import { resetRouter,allAsyncRoutes, constantRoutes,anyRoute} from "@/router";
-//路由器
+//引入登录|退出登录|获取用户信息的接口函数
+import { login, logout, getInfo } from '@/api/user'
+// 获取token|设置token|删除token的函数
+import { getToken, setToken, removeToken } from '@/utils/auth'
+//路由模块当中重置路由的方法
+import { anyRoutes, resetRouter,asyncRoutes,constantRoutes} from '@/router';
 import router from '@/router';
 import cloneDeep from 'lodash/cloneDeep'
 
+//箭头函数
 const getDefaultState = () => {
   return {
+    //获取token
     token: getToken(),
-    name: "",
-    avatar: "",
+    //存储用户名
+    name: '',
+    //存储用户头像
+    avatar: '',
+    //服务器返回的菜单信息【根据不同的角色：返回的标记信息，数组里面的元素是字符串】
+    routes:[],
+    //角色信息
     roles:[],
+    //按钮权限的信息
     buttons:[],
-    allAsyncRoutes:[],//将来项目中要展示的全部的异步路由【根据不同的身份展示不同的异步路由】-----不是字符串
-    allRoutes:[],//计算完毕：不同用户身份需要展示的全部路由---不是字符串
-  };
-};
+    //对比之后【项目中已有的异步路由，与服务器返回的标记信息进行对比最终需要展示的理由】
+    resultAsyncRoutes:[],
+    //用户最终需要展示全部路由
+    resultAllRputes:[]
+  }
+}
 
-//state右侧数值应该为对象
-const state = getDefaultState();
-//mutations:修改state唯一的地方
+const state = getDefaultState()
+
+//唯一修改state的地方
 const mutations = {
   //重置state
-  RESET_STATE: state => {
-    Object.assign(state, getDefaultState());
+  RESET_STATE: (state) => {
+    Object.assign(state, getDefaultState())
   },
-  //设置token
+  //存储token
   SET_TOKEN: (state, token) => {
-    state.token = token;
+    state.token = token
   },
-  //设置用户信息
+  //存储用户信息
   SET_USERINFO:(state,userInfo)=>{
-       //存储用户名字
-       state.name = userInfo.name;
-       //存储用户的头像
-       state.avatar = userInfo.avatar;
-       //存储角色
-       state.roles = userInfo.roles;
-       //存储按钮
-       state.buttons = userInfo.buttons;
+    //用户名
+     state.name = userInfo.name;
+     //用户头像
+     state.avatar = userInfo.avatar;
+     //菜单权限标记
+     state.routes = userInfo.routes;
+     //按钮权限标记
+     state.buttons = userInfo.buttons;
+     //角色
+     state.roles = userInfo.roles;
   },
-  //将来程序中需要展示的异步路径进行设置
-  SET_ASYNCROUTES(state,allAsyncRoutes){
-     //仓库仓储当用用户（不同身份可以访问异步路由）
-     state.allAsyncRoutes = allAsyncRoutes;
-     //下面的代码返回的是一个数组：数组里面包含用户全部需要展示路由
-     state.allRoutes = constantRoutes.concat(state.allAsyncRoutes,anyRoute);
-     //修改路由器中新的路由
-     router.addRoutes(state.allRoutes);
+  //最终计算出的异步路由
+  SET_RESULTASYNCROUTES:(state,asyncRoutes)=>{
+     //vuex保存当前用户的异步路由，注意，一个用户需要展示完成路由：常量、异步、任意路由
+     state.resultAsyncRoutes = asyncRoutes;
+     //计算出当前用户需要展示所有路由
+     state.resultAllRputes = constantRoutes.concat(state.resultAsyncRoutes,anyRoutes);
+     //给路由器添加新的路由
+      router.addRoutes(state.resultAllRputes)
   }
-};
-
-//定义一个函数：计算出需要展示的异步路由
-function filterAllAsyncRoutes(allAsyncRoutes,routes){ 
-  //过滤：需要返回值 true 新数组要的   false新数组不要
- return allAsyncRoutes.filter(item=>{
-     //判断当前路由当中的name属性值是否在routes中出现
-     //如果出现需要的
-     if(routes.indexOf(item.name)!=-1){
-        //如果当前路由有子理由
-       if(item.children&&item.children.length){
-           //递归进行对比子组件是否出现
-           item.children = filterAllAsyncRoutes(item.children,routes);
-       }
-        return true;
-     }
-  })
 }
 
 
+//定义一个函数：两个数组进行对比，对比出当前用户到底显示哪些异步路由
+ const computedAsyncRoutes = (asyncRoutes,routes)=>{
+     //过滤出当前用户【超级管理|普通员工】需要展示的异步路由
+    return asyncRoutes.filter(item=>{
+         //数组当中没有这个元素返回索引值-1，如果有这个元素返回的索引值一定不是-1 
+        if(routes.indexOf(item.name)!=-1){
+          //递归:别忘记还有2、3、4、5、6级路由
+          if(item.children&&item.children.length){
+              item.children = computedAsyncRoutes(item.children,routes);
+          }
+          return true;
+        }
+     })
+ }
+
+//actions
 const actions = {
-  
-  //登录业务
+  //这里在处理登录业务
   async login({ commit }, userInfo) {
+    //解构出用户名与密码
     const { username, password } = userInfo;
     let result = await login({ username: username.trim(), password: password });
-    if (result.code == 20000 || result.code == 200) {
-      //提交mutation，修改Vuex中state的token字段
-      commit("SET_TOKEN", result.data.token);
-      //持久化存储
+    //注意：当前登录请求现在使用mock数据，mock数据code是20000
+    if(result.code==20000){
+      //vuex存储token
+      commit('SET_TOKEN',result.data.token);
+      //本地持久化存储token
       setToken(result.data.token);
-      return "ok";
-    } else {
-      return Promise.reject(new Error("faile"));
+      return 'ok';
+    }else{
+      return Promise.reject(new Error('faile'));
     }
   },
-  //获取用户信息（开发后台管理系统权限问题:用户信息）
+
+  //获取用户信息
   getInfo({ commit, state }) {
-     //返回promise
+
     return new Promise((resolve, reject) => {
-      //getInfo函数：带着token获取用户信息
       getInfo(state.token).then(response => {
-           //服务器返回的用户信息
-          const { data } = response;
-          //存储用户信息
-          commit('SET_USERINFO',data);
-          //提交mutations:给allAsyncRoutes进行赋值
-          //用户全部异步路由【注意：当晚上测试的时候，用户切换的时候，切记这里需要深拷贝】
-          commit('SET_ASYNCROUTES',filterAllAsyncRoutes(cloneDeep(allAsyncRoutes),data.routes));
-          resolve(data);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+        //获取用户信息:返回数据包含：用户名name、用户头像avatar、routes[返回的标志:不同的用户应该展示哪些菜单的标记]、roles（用户角色信息）、buttons【按钮的信息：按钮权限用的标记】
+        const { data } = response;
+        //vuex存储用户全部的信息
+        commit('SET_USERINFO',data);
+        commit('SET_RESULTASYNCROUTES',computedAsyncRoutes(cloneDeep(asyncRoutes),data.routes));
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
   },
 
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token)
-        .then(() => {
-          removeToken(); // must remove  token  first
-          resetRouter();
-          commit("RESET_STATE");
-          resolve();
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+      logout(state.token).then(() => {
+        removeToken() // must remove  token  first
+        resetRouter()
+        commit('RESET_STATE')
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
   },
 
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
-      removeToken(); // must remove  token  first
-      commit("RESET_STATE");
-      resolve();
-    });
+      removeToken() // must remove  token  first
+      commit('RESET_STATE')
+      resolve()
+    })
   }
-};
+}
+
 
 
 export default {
@@ -141,4 +148,5 @@ export default {
   state,
   mutations,
   actions
-};
+}
+

@@ -51,7 +51,7 @@
         </template>
       </el-table-column>
       
-      <el-table-column label="操作" width="200" align="center">
+      <el-table-column label="操作" width="300" align="center">
         <template slot-scope="{row}">
           <HintButton size="mini" type="info" icon="el-icon-info" title="分配权限"
             @click="$router.push(`/acl/role/auth/${row.id}?roleName=${row.roleName}`)"/>

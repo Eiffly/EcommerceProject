@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- 行内form -->
+    <!-- inline:代表的是行内表单，代表一行可以放置多个表单元素 -->
     <el-form :inline="true" class="demo-form-inline" :model="cForm">
       <el-form-item label="一级分类">
         <el-select
           placeholder="请选择"
           v-model="cForm.category1Id"
-          @change="getCategory2List"
+          @change="handler1"
           :disabled="show"
         >
           <el-option
@@ -19,9 +19,9 @@
       </el-form-item>
       <el-form-item label="二级分类">
         <el-select
-          v-model="cForm.category2Id"
           placeholder="请选择"
-          @change="getCategory3List"
+          v-model="cForm.category2Id"
+          @change="handler2"
           :disabled="show"
         >
           <el-option
@@ -32,11 +32,11 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="三级级分类">
+      <el-form-item label="三级分类">
         <el-select
           placeholder="请选择"
           v-model="cForm.category3Id"
-          @change="handler"
+          @change="handler3"
           :disabled="show"
         >
           <el-option
@@ -57,75 +57,72 @@ export default {
   props: ["show"],
   data() {
     return {
-      //一级分类的数据---数组
+      //一级分类的数据
       list1: [],
-      //二级分类的数据---数组
+      //二级分类的数据
       list2: [],
-      //三级分类的数据---数组
+      //三级分类的数据
       list3: [],
-      //收集id
+      //收集相应的一级二级三级分类的id
       cForm: {
         category1Id: "",
         category2Id: "",
-        category3Id: ""
-      }
+        category3Id: "",
+      },
     };
   },
-  //获取一级分类的数据
+  //组件挂载完毕：向服务器发请求，获取相应的一级分类的数据
   mounted() {
+    //获取一级分类的数据的方法
     this.getCategory1List();
   },
   methods: {
-    //当组件已挂在完毕，立刻获取一级分类的数据
+    //获取一级分类数据的方法
     async getCategory1List() {
-      let result = await this.$API.attr.reqGetCategory1();
+      //获取一级分类的请求：不需要携带参数
+      let result = await this.$API.attr.reqCategory1List();
       if (result.code == 200) {
-        //组件实例需要存储一级分类数据
         this.list1 = result.data;
       }
     },
-    //获取二级分类的数据[一级分类的change回调]
-    async getCategory2List(category1Id) {
-      //出发自定义事件-----子给父通信
-      this.$emit("getCategoryId", {
-        categoryId: this.cForm.category1Id,
-        flag: 1
-      });
+    //一级分类的select事件回调（当一级分类的option发生变化的时候获取相应二级分类的数据）
+    async handler1() {
       //清除数据
-      this.cForm.category2Id = "";
-      this.cForm.category3Id = "";
       this.list2 = [];
       this.list3 = [];
-      //获取二级分类的数据
-      let result = await this.$API.attr.reqGetCategory2(category1Id);
+      this.cForm.category2Id = "";
+      this.cForm.category3Id = "";
+      //解构出一级分类的id
+      const { category1Id } = this.cForm;
+      this.$emit("getCategoryId", { categoryId: category1Id, level: 1 });
+      //通过一级分类的id，获取二级分类的数据
+      let result = await this.$API.attr.reqCategory2List(category1Id);
       if (result.code == 200) {
         this.list2 = result.data;
       }
     },
-    //获取三级分类的数据【二级分类的chang事件回调】
-    async getCategory3List(category2Id) {
-      //触发自定义事件----子给父通信
-      this.$emit("getCategoryId", {
-        categoryId: this.cForm.category2Id,
-        flag: 2
-      });
-      //清空数据
-      this.cForm.category3Id = "";
+    //二级分类的select事件回调（当二级分类的option发生变化的时候获取相应三级分类的数据）
+    async handler2() {
+      //清除数据
       this.list3 = [];
-      let result = await this.$API.attr.reqGetCategory3(category2Id);
+      this.cForm.category3Id = "";
+      //结构出数据
+      const { category2Id } = this.cForm;
+      this.$emit("getCategoryId", { categoryId: category2Id, level: 2 });
+      let result = await this.$API.attr.reqCategory3List(category2Id);
       if (result.code == 200) {
         this.list3 = result.data;
       }
     },
-    //三级分类下拉框的回调函数
-    handler() {
-      //触发自定义事件----子给父通信
-      this.$emit("getCategoryId", {
-        categoryId: this.cForm.category3Id,
-        flag: 3
-      });
-    }
-  }
+    //三级分类的事件回调
+    handler3() {
+      //获取三级分类的id
+      const { category3Id } = this.cForm;
+      this.$emit("getCategoryId", { categoryId: category3Id, level: 3 });
+    },
+  },
 };
 </script>
-<style scoped></style>
+
+<style scoped>
+</style>

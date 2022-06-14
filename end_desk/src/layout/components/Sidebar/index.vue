@@ -11,10 +11,9 @@
         :active-text-color="variables.menuActiveText"
         :collapse-transition="false"
         mode="vertical"
-      > 
-      <!-- pjc:已经写好侧边栏，但是需要注意遍历数据，需要变为我们再仓库中已经计算好的（不同用户需要展示的路由信息） -->
-      <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
-       
+      >
+        <!-- 潘xx:遍历菜单栏的时候，开始遍历的都是常量路由 -->
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -30,9 +29,13 @@ export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
-      'sidebar',
-      'routes'
+      'sidebar'
     ]),
+    //应该替换为仓库中已经计算好的需要展示的全部路由
+    routes() {
+      //sliderbar：需要遍历的应该是仓库计算完毕的全部路由
+      return this.$store.state.user.resultAllRputes;
+    },
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

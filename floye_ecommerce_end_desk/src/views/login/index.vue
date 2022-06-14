@@ -1,11 +1,13 @@
 <template>
   <div class="login-container">
+    
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">登录</h3>
       </div>
 
+      <!-- 收集用户数据-->
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -20,7 +22,8 @@
           auto-complete="on"
         />
       </el-form-item>
-
+      
+      <!-- 收集用户密码 -->
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
@@ -41,7 +44,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
@@ -105,8 +108,11 @@ export default {
         this.$refs.password.focus()
       })
     },
+       //登录业务：发请求，带着用户名与密码给服务器（成功与失败）
     handleLogin() {
+      // 这里是在验证表单元素（用户名与密码）的是否符合规则
       this.$refs.loginForm.validate(valid => {
+        // 正确：加载效果+派发action
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
@@ -115,7 +121,8 @@ export default {
           }).catch(() => {
             this.loading = false
           })
-        } else {
+        } else { 
+          // 错误
           console.log('error submit!!')
           return false
         }
@@ -180,7 +187,11 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  // background-color: $bg;
+  // background:url(~@/assets/黑白.jpg) no-repeat;
+  background-image: url(~@/assets/黑白.jpg) ;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   overflow: hidden;
 
   .login-form {

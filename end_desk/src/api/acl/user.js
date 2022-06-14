@@ -24,7 +24,7 @@ export function getInfo() {
 }
 
 /*
-退出多登陆
+登出
 */
 export function logout() {
   return request({

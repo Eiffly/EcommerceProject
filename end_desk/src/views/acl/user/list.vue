@@ -1,20 +1,23 @@
 <template>
   <div class="app-container">
     <el-form inline>
+      <!-- 表单元素 -->
       <el-form-item>
          <el-input v-model="tempSearchObj.username" placeholder="用户名" />
       </el-form-item>
-
+      <!-- 查询与情况的按钮 -->
       <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
       <el-button type="default" @click="resetSearch">清空</el-button>
     </el-form>
 
     <div style="margin-bottom: 20px">
+      <!-- 添加与批量添加按钮 -->
       <el-button type="primary" @click="showAddUser">添 加</el-button>
       <el-button type="danger" @click="revomveUsers" :disabled="selectedIds.length===0"
         >批量删除</el-button>
     </div>
 
+    <!-- table表格：展示用户信息的地方 -->
     <el-table
       border
       stripe
@@ -53,7 +56,7 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <!-- 分页器 -->
     <el-pagination
       :current-page="page"
       :total="total"
@@ -64,7 +67,7 @@
       @current-change="getUsers"
       @size-change="handleSizeChange"
     />
-
+    <!-- 对话框的结构 -->
     <el-dialog :title="user.id ? '修改用户' : '添加用户'" :visible.sync="dialogUserVisible">
       <el-form ref="userForm" :model="user" :rules="userRules" label-width="120px">
         <el-form-item label="用户名" prop="username">
