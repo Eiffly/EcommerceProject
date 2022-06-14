@@ -13,13 +13,13 @@
          data:表格组件将来需要展示的数据------数组类型
          border：是给表格添加边框
          column属性
-         label：显示标题
-         width：对应列的宽度
-         align：标题的对齐方式
-         prop:对应列内容的字段名
+          label：显示标题
+          width：对应列的宽度
+          align：标题的对齐方式
+          prop:对应列内容的字段名
          注意1：elmentUI当中的table组件，展示的数据是以一列一列进行展示数据
        -->
-    <el-table style="width: 100%" border :data="list">
+    <el-table style="width: 100%" border:data="list">
       <el-table-column type="index" label="序号" width="80px" align="center">
       </el-table-column>
       <el-table-column prop="tmName" label="品牌名称" width="width">
@@ -73,7 +73,7 @@
       @size-change="handleSizeChange"
       layout="prev, pager, next, jumper,->,sizes,total"
     >
-    </el-pagination>
+    </el-pagination>Y
     <!--
       对话框
       :visible.sync:控制对话框显示与隐藏用的
