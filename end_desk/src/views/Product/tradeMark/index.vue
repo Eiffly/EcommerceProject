@@ -58,7 +58,7 @@
       total：代表分页器一共需要展示数据条数
       page-size：代表的是每一页需要展示多少条数据
       page-sizes：代表可以设置每一页展示多少条数据
-      layout：可以实现分页器布局
+      layout：可以实现分页器布局 ->右边去吧你
       pager-count:按钮的数量  如果 9  连续页码是7
 
     -->
@@ -73,7 +73,8 @@
       @size-change="handleSizeChange"
       layout="prev, pager, next, jumper,->,sizes,total"
     >
-    </el-pagination>Y
+    </el-pagination
+    >Y
     <!--
       对话框
       :visible.sync:控制对话框显示与隐藏用的
@@ -273,7 +274,7 @@ export default {
               message: "删除成功!",
             });
             //再次获取品牌列表数据
-            this.getPageList(this.list.length>1?this.page:this.page-1);
+            this.getPageList(this.list.length > 1 ? this.page : this.page - 1);
           }
         })
         .catch(() => {
