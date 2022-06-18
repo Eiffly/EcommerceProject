@@ -85,7 +85,7 @@
       :visible.sync="dialogFormVisible"
     >
       <!-- form表单 :model属性，这个属性的作用是,把表单的数据收集到那个对象的身上 ，将来表单验证，也需要这个属性-->
-      <el-form style="width: 80%" :model="tmForm" :rules="rules" ref="ruleForm">
+      <el-form  style="width: 80%" :model="tmForm" :rules="rules" ref="ruleForm">
         <el-form-item label="品牌名称" label-width="100px" prop="tmName">
           <el-input autocomplete="off" v-model="tmForm.tmName"></el-input>
         </el-form-item>
