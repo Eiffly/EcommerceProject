@@ -265,7 +265,7 @@ export default {
           //过滤掉属性值不是空的
           if(item.valueName!=''){
             //删除掉flag属性
-            delete item.flag;
+     delete item.flag;
             return true;
           }
       })

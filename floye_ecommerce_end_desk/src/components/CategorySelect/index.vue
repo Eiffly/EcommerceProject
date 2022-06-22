@@ -6,6 +6,7 @@
           placeholder="请选择"
           v-model="cForm.category1Id"
           @change="handler1"
+          :disabled="show"
         >
           <el-option
             :label="c1.name"
@@ -21,6 +22,7 @@
           placeholder="请选择"
           v-model="cForm.category2Id"
           @change="handler2"
+           :disabled="show"
         >
           <el-option
             :label="c2.name"
@@ -35,6 +37,7 @@
           placeholder="请选择"
           v-model="cForm.category3Id"
           @change="handler3"
+           :disabled="show"
         >
           <el-option
             :label="c3.name"
@@ -65,6 +68,7 @@ export default {
       },
     };
   },
+  props:['show'],
   mounted() {
     this.getCategory1List();
   },
@@ -84,7 +88,6 @@ export default {
       this.cForm.category3Id = "";
       const { category1Id } = this.cForm;
       //触发事件
-      this.$emit("getCategoryId", category1Id);
         this.$emit("getCategoryId", { categoryId: category1Id, level: 1 });
       let result = await this.$API.attr.reqCategory2List(category1Id);
       if (result.code == 200) {

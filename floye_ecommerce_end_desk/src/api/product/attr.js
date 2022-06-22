@@ -19,6 +19,9 @@ export const reqAttrList = (category1Id,category2Id,category3Id) => request(
 
 
 
+// 添加/修改属性成功
+export const reqAddOrUpdateAttr = (data) => request(
+    { url: '/admin/product/saveAttrInfo', method: 'post',data});
 
 
 

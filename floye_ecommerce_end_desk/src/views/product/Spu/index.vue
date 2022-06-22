@@ -1,15 +1,12 @@
 <template>
-    <div>
-        Spu
-    </div>
+  <div>Spu</div>
 </template>
 
 <script>
 export default {
-    name:"Spu"
-}
+  name: "Spu",
+};
 </script>
 
 <style>
-
 </style>
