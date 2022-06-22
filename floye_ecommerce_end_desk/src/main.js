@@ -22,6 +22,9 @@ import CategorySelect from "@/components/CategorySelect";
 Vue.component(CategorySelect.name, CategorySelect);
 
 
+import HintButton from "@/components/HintButton";
+Vue.component(HintButton.name, HintButton);
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
