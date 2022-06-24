@@ -57,13 +57,19 @@
                 size="mini"
                 title="查看SPU"
               ></HintButton>
-              <HintButton
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                title="删除SPU"
+              <el-popconfirm
+                :title="`确认删除${row.spuName}吗?`"
+                @onConfirm="deleteSpu(row)"
               >
-              </HintButton>
+                <HintButton
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  title="删除SPU"
+                  slot="reference"
+                >
+                </HintButton>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -162,16 +168,37 @@ export default {
     // 添加SPU的回调
     addSpu() {
       this.scene = 1;
+      this.$refs.spu.addSpuData(this.category3Id);
     },
     // 修改SPU的回调
     updateSpu(row) {
-      this.scene=1
+      this.scene = 1;
       // console.log(row)
-      this.$refs.spu.initSpuData(row)
+      this.$refs.spu.initSpuData(row);
     },
+
+    //删除SPU的回调
+    async deleteSpu(row) {
+    // 数据
+    let result=await this.$API.spu.reqDeleteSpu(row.id)
+    if(result.code==200){
+      //删除数据
+         this.$message({ type: "success", message: "删除成功" });
+        //代表SPU个数大于1删除的时候停留在当前页，如果SPU个数小于1 回到上一页
+        this.getSpuList(this.records.length > 1 ? this.page : this.page - 1);
+    }
+    },
+    
     //修改场景
-    changeScene(scene) {
+    changeScene({ scene, flag }) {
       this.scene = scene;
+      if (flag == "修改") {
+        // 停留在当前页
+        this.getSpuList(this.page);
+      } else {
+        // 停留在第一页
+        this.getSpuList();
+      }
     },
   },
 };

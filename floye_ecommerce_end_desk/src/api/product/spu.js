@@ -22,3 +22,17 @@ export const reqSpuImageList = (spuId) => request(
 // 获取平台全部销售属性----整个平台销售属性一共三个  reqBaseSaleAttrList /admin/product/baseSaleAttrList   get
 export const reqBaseSaleAttrList = () => request(
     { url: "/admin/product/baseSaleAttrList", method: 'get' });
+
+
+// 添加属性或修改属性的保存
+export const reqAddOrUpdateSpu = (spuInfo)=>{
+    if (spuInfo.id){
+        return request({ url: '/admin/product/updateSpuInfo', method: 'post', data: spuInfo })
+    }else{
+        return request({ url: '/admin/product/saveSpuInfo', method: 'post', data: spuInfo })
+    }
+}
+
+
+// 删除SPU
+export const reqDeleteSpu = (spuId) => request({ url: `/admin/product/deleteSpu/${spuId}`, method: 'delete' });
