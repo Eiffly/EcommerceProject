@@ -36,3 +36,27 @@ export const reqAddOrUpdateSpu = (spuInfo)=>{
 
 // 删除SPU
 export const reqDeleteSpu = (spuId) => request({ url: `/admin/product/deleteSpu/${spuId}`, method: 'delete' });
+
+
+//SKU图片列表
+export const reqSpuImageLIst = (spuId) => request({ url: `/admin/product/spuImageList/${spuId}`, method: 'get' });
+
+
+// SKU销售属性
+export const reqSpuSaleAttrList = (spuId) => request({ url: `/admin/product/spuSaleAttrList/${spuId}`, method: 'get' });
+
+
+// SKU平台属性
+export const reqAttrInfoList = (category1Id, category2Id, category3Id) => request({ url: `/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`, method: 'get' });
+
+
+//添加SKU
+///admin/product/saveSkuInfo  post
+export const reqAddSku = (skuInfo) => request({ url: '/admin/product/saveSkuInfo', method: 'post', data: skuInfo });
+
+
+
+//获取SKU列表数据的接口
+//GET /admin/product/findBySpuId/{spuId}  
+export const reqSkuList = (spuId) => request({ url: `/admin/product/findBySpuId/${spuId}`, method: 'get' });
+
