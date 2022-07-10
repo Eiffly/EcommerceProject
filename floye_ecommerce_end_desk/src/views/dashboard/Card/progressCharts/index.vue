@@ -25,6 +25,7 @@ export default {
           type: "bar",
           data: [78],
           barWidth: 10,
+          color: "#78291f",
           showBackground: true,
           backgroundStyle: {
             color: "rgba(180, 180, 180, 0.2)",

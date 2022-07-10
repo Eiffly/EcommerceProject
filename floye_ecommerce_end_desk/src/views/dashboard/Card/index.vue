@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row :gutter="30">
       <el-col :span="6">
         <el-card>
           <Detail title="总销售额" count="￥ 126560">
@@ -145,5 +145,4 @@ export default {
 svg {
   padding-top: 6px;
 }
-
 </style>
