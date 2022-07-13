@@ -69,7 +69,7 @@ export default {
           subtext: value,
         },
       });
-      console.log(params);
+    //   console.log(params);
     });
   },
 };

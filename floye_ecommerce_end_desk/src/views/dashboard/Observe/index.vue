@@ -26,14 +26,14 @@ export default {
   components: {
     Search,
     Category,
+    
   },
+  
 };
 </script>
 
 <style scoped>
-.card{
-  margin-top:30px
+.card {
+  margin-top: 30px;
 }
-
-
 </style>

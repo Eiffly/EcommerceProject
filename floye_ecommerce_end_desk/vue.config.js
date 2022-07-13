@@ -48,6 +48,7 @@ module.exports = {
     },
     // 不再去使用mock的数据
     // before: require('./mock/mock-server.js')
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

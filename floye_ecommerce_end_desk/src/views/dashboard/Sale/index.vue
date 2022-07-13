@@ -23,7 +23,7 @@
             end-placeholder="结束日期"
             size="mini"
             v-model="date"
-           value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
           >
           </el-date-picker>
         </div>
@@ -83,6 +83,7 @@
 <script>
 import * as echarts from "echarts";
 import dayjs from "dayjs";
+import { mapState } from "vuex";
 export default {
   name: "Sale",
   data() {
@@ -95,76 +96,117 @@ export default {
   mounted() {
     this.mycharts = echarts.init(this.$refs.charts);
     this.mycharts.setOption({
-     tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow'
-    }
-  },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true
-  },
-  xAxis: [
-    {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      axisTick: {
-        alignWithLabel: true
-      }
-    }
-  ],
-  yAxis: [
-    {
-      type: 'value'
-    }
-  ],
-  series: [
-    {
-      name: 'Direct',
-      type: 'bar',
-      barWidth: '60%',
-      data: [10, 52, 200, 334, 390, 330, 220]
-    }
-  ]
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
+        },
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true,
+      },
+      xAxis: [
+        {
+          type: "category",
+          data: [],
+          axisTick: {
+            alignWithLabel: true,
+          },
+        },
+      ],
+      yAxis: [
+        {
+          type: "value",
+        },
+      ],
+      series: [
+        {
+          name: "Direct",
+          type: "bar",
+          barWidth: "60%",
+          data: [],
+        },
+      ],
     });
   },
   computed: {
-    title() {
-      return this.activeName == "sale" ? "销售量" : "访问量";
+    title: {
+      get(){
+        return this.activeName == "sale" ? "销售量" : "访问量";
+      },
+      set() {
+      },
     },
+    ...mapState({
+      listState: (state) => state.home.list,
+    }),
   },
   watch: {
     title() {
       this.mycharts.setOption({
         title: {
+          text: this.title + "数据",
+        },
+        xAxis: [
+          {
+            data:
+              this.title == "销售量"
+                ? this.listState.orderFullYearAxis
+                : this.listState.userFullYearAxis,
+          },
+        ],
+        series: [
+          {
+            data:
+              this.title == "销售量"
+                ? this.listState.orderFullYear
+                : this.listState.userFullYear,
+          },
+        ],
+      });
+    },
+
+    listState() {
+      this.mycharts.setOption({
+        title: {
           text: `${this.title}` + "数据",
         },
+        xAxis: [
+          {
+            data: (this.title = this.listState.orderFullYearAxis),
+          },
+        ],
+        series: [
+          {
+            data: (this.title = this.listState.orderFullYear),
+          },
+        ],
       });
     },
   },
   methods: {
-    setDay(){
-      const day=dayjs().format("YYYY-MM-DD");
-      this.date=[day,day]
+    setDay() {
+      const day = dayjs().format("YYYY-MM-DD");
+      this.date = [day, day];
     },
-    setWeek(){
-       const start=dayjs().day(0).format("YYYY-MM-DD");
-       const end=dayjs().day(6).format("YYYY-MM-DD");
-      this.date=[start,end]
+    setWeek() {
+      const start = dayjs().day(0).format("YYYY-MM-DD");
+      const end = dayjs().day(6).format("YYYY-MM-DD");
+      this.date = [start, end];
     },
-    setMonth(){
-      const start=dayjs().startOf('month').format("YYYY-MM-DD");
-       const end=dayjs().endOf('month').format("YYYY-MM-DD");
-      this.date=[start,end]
+    setMonth() {
+      const start = dayjs().startOf("month").format("YYYY-MM-DD");
+      const end = dayjs().endOf("month").format("YYYY-MM-DD");
+      this.date = [start, end];
     },
-    setYear(){
-      const start=dayjs().startOf('year').format("YYYY-MM-DD");
-       const end=dayjs().endOf('year').format("YYYY-MM-DD");
-      this.date=[start,end]
-    }
+    setYear() {
+      const start = dayjs().startOf("year").format("YYYY-MM-DD");
+      const end = dayjs().endOf("year").format("YYYY-MM-DD");
+      this.date = [start, end];
+    },
   },
 };
 </script>
