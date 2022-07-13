@@ -1,13 +1,12 @@
 <template>
   <div class="login-container">
-    
+    <!-- el-form组件：elementUI插件里面的一个组件，经常展示表单元素  model：用于收集表单数据  rules：表单验证规则-->
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
         <h3 class="title">登录</h3>
       </div>
 
-      <!-- 收集用户数据-->
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -22,8 +21,7 @@
           auto-complete="on"
         />
       </el-form-item>
-      
-      <!-- 收集用户密码 -->
+
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
@@ -61,6 +59,8 @@ import { validUsername } from '@/utils/validate'
 export default {
   name: 'Login',
   data() {
+    //先不用在意：这里面在进行表单验证，验证用户名与密码操作
+    //回首在看这里
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('Please enter the correct user name'))
@@ -81,7 +81,7 @@ export default {
         password: '111111'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
@@ -108,21 +108,24 @@ export default {
         this.$refs.password.focus()
       })
     },
-       //登录业务：发请求，带着用户名与密码给服务器（成功与失败）
+    //登录业务：发请求，带着用户名与密码给服务器（成功与失败）
     handleLogin() {
-      // 这里是在验证表单元素（用户名与密码）的是否符合规则
+      //这里是在验证表单元素（用户名与密码）的是否符合规则
       this.$refs.loginForm.validate(valid => {
-        // 正确：加载效果+派发action
+        //如果符合验证规则
         if (valid) {
-          this.loading = true
+          //按钮会有一个loading效果
+          this.loading = true;
+          //派发一个action:user/login,带着用户名与密码的载荷
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+            //登录成功进行路由的跳转
+            this.$router.push({ path: this.redirect || '/' });
+            //loading效果结束
             this.loading = false
           }).catch(() => {
             this.loading = false
           })
-        } else { 
-          // 错误
+        } else {
           console.log('error submit!!')
           return false
         }
@@ -187,13 +190,12 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  // background-color: $bg;
-  // background:url(~@/assets/黑白.jpg) no-repeat;
-  background-image: url(~@/assets/黑白.jpg) ;
+  overflow: hidden;
+  // background:url(~@/assets/黑白.png);
+  // background-size: 100% 100%;
+ background-image: url(~@/assets/黑白.jpg) ;
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  overflow: hidden;
-
   .login-form {
     position: relative;
     width: 520px;

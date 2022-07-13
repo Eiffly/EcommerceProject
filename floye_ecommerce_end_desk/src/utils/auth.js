@@ -7,6 +7,7 @@ export function getToken() {
 }
 
 export function setToken(token) {
+  // 本地持久化存储token
   return Cookies.set(TokenKey, token)
 }
 
